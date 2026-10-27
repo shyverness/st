@@ -7,6 +7,8 @@ include config.mk
 SRC = st.c x.c
 OBJ = $(SRC:.c=.o)
 
+.PHONY: all st config.h
+
 all: st
 
 config.h:

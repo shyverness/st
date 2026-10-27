@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+static char *font = "monocraft:pixelsize=16:antialias=true:autohint=true";
 static int borderpx = 2;
 
 /*
@@ -16,7 +16,7 @@ static int borderpx = 2;
  * 4: value of shell in /etc/passwd
  * 5: value of shell in config.h
  */
-static char *shell = "/bin/sh";
+static char *shell = "/bin/zsh";
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
 char *scroll = NULL;
@@ -45,7 +45,7 @@ int allowaltscreen = 1;
 
 /* allow certain non-interactive (insecure) window operations such as:
    setting the clipboard text */
-int allowwindowops = 0;
+int allowwindowops = 1;
 
 /*
  * draw latency range in ms - from new content/keypress/etc until drawing.
@@ -95,33 +95,54 @@ unsigned int tabspaces = 8; /* must be > 0 */
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	/* Rosepine
+	 * https://github.com/rose-pine/st/blob/main/patches/rose-pine.diff
+	 */
 
-	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
+	// "#26233a",
+	// "#eb6f92",
+	// "#9ccfd8",
+	// "#f6c177",
+	// "#31748f",
+	// "#c4a7e7",
+	// "#ebbcba",
+	// "#e0def4",
 
-	[255] = 0,
+	// "#6e6a86",
+	// "#eb6f92",
+	// "#9ccfd8",
+	// "#f6c177",
+	// "#31748f",
+	// "#c4a7e7",
+	// "#ebbcba",
+	// "#e0def4",
 
-	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#555555",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
+	// [255] = 0,
+
+	// // /* more colors can be added after 255 to use with DefaultXX */
+	// // "#191724",
+
+	/* Gruvbox
+	 * https://st.suckless.org/patches/gruvbox/st-gruvbox-dark-0.8.5.diff
+	 */
+
+	[0] = "#282828", /* hard contrast: #1d2021 / soft contrast: #32302f */
+	[1] = "#cc241d", /* red     */
+	[2] = "#98971a", /* green   */
+	[3] = "#d79921", /* yellow  */
+	[4] = "#458588", /* blue    */
+	[5] = "#b16286", /* magenta */
+	[6] = "#689d6a", /* cyan    */
+	[7] = "#a89984", /* white   */
+	[8]  = "#928374", /* black   */
+	[9]  = "#fb4934", /* red     */
+	[10] = "#b8bb26", /* green   */
+	[11] = "#fabd2f", /* yellow  */
+	[12] = "#83a598", /* blue    */
+	[13] = "#d3869b", /* magenta */
+	[14] = "#8ec07c", /* cyan    */
+	[15] = "#ebdbb2", /* white   */
+
 };
 
 
@@ -129,10 +150,21 @@ static const char *colorname[] = {
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-unsigned int defaultfg = 258;
-unsigned int defaultbg = 259;
-unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 257;
+
+/*
+ * Rosé Pine
+ */
+// unsigned int defaultfg = 7;
+// unsigned int defaultbg = 256;
+// unsigned int defaultcs = 7;
+
+/*
+ * Gruvbox
+ */
+unsigned int defaultfg = 15;
+unsigned int defaultbg = 0;
+unsigned int defaultcs = 15;
+static unsigned int defaultrcs = 7;
 
 /*
  * Default shape of cursor
@@ -188,19 +220,19 @@ static MouseShortcut mshortcuts[] = {
 #define TERMMOD (ControlMask|ShiftMask)
 
 static Shortcut shortcuts[] = {
-	/* mask                 keysym          function        argument */
-	{ XK_ANY_MOD,           XK_Break,       sendbreak,      {.i =  0} },
-	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
-	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
-	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
-	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
-	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
-	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
-	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
-	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
-	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
-	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
-	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+	/* mask                  keysym          function        argument */
+	{ XK_ANY_MOD,            XK_Break,       sendbreak,      {.i =  0} },
+	{ ControlMask,           XK_Print,       toggleprinter,  {.i =  0} },
+	{ ShiftMask,             XK_Print,       printscreen,    {.i =  0} },
+	{ XK_ANY_MOD,            XK_Print,       printsel,       {.i =  0} },
+	{ ControlMask,           XK_equal,        zoom,           {.f = +1} },
+	{ ControlMask,           XK_minus,       zoom,           {.f = -1} },
+	{ ControlMask,           XK_parenright,  zoomreset,      {.f =  0} },
+	{ ControlMask|ShiftMask, XK_C,           clipcopy,       {.i =  0} },
+	{ ControlMask|ShiftMask, XK_V,           clippaste,      {.i =  0} },
+	{ ControlMask,           XK_Y,           selpaste,       {.i =  0} },
+	{ ShiftMask,             XK_Insert,      selpaste,       {.i =  0} },
+	{ ControlMask,           XK_Num_Lock,    numlock,        {.i =  0} },
 };
 
 /*
